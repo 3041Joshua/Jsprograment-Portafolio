@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSPROGRAMENT — Creador y Diseñador Web</title>
+<style>
+  :root{
+    --bg: #0a0a0a;
+    --bg-panel: #121212;
+    --bg-panel-2: #161616;
+    --line: #262626;
+    --lime: #c6ff2e;
+    --lime-dim: #7a9c1e;
+    --text: #e9e9e9;
+    --muted: #7a7a7a;
+    --mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--lime); color:#0a0a0a; }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--lime); outline-offset:3px; }
+
+  .grid-bg{
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(to right, rgba(198,255,46,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(198,255,46,0.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .container{ max-width:1100px; margin:0 auto; padding:0 28px; position:relative; z-index:1; }
+
+  header{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:blur(10px);
+    background:rgba(10,10,10,0.75);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 28px; max-width:1100px; margin:0 auto;
+  }
+  .brand{ font-family:var(--mono); font-weight:600; font-size:16px; letter-spacing:0.5px; }
+  .brand .tag{ color:var(--muted); }
+  .brand .name{ color:var(--lime); }
+  .nav-links{ display:flex; gap:32px; font-family:var(--mono); font-size:13px; color:var(--muted); }
+  .nav-links a{ transition:color .2s ease; position:relative; }
+  .nav-links a:hover{ color:var(--lime); }
+  .nav-links span{ color:var(--lime-dim); }
+
+  .hero{ min-height:88vh; display:flex; align-items:center; padding:80px 0 60px; }
+  .hero-inner{ max-width:820px; }
+  .eyebrow{
+    font-family:var(--mono); font-size:13px; color:var(--lime);
+    display:flex; align-items:center; gap:10px; margin-bottom:24px;
+  }
+  .eyebrow::before{
+    content:''; width:8px; height:8px; background:var(--lime); border-radius:50%;
+    box-shadow:0 0 12px var(--lime); animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+
+  .terminal{
+    font-family:var(--mono); background:var(--bg-panel); border:1px solid var(--line);
+    border-radius:10px; overflow:hidden; box-shadow:0 30px 80px -30px rgba(198,255,46,0.08);
+  }
+  .terminal-bar{
+    display:flex; align-items:center; gap:8px; padding:12px 16px;
+    background:var(--bg-panel-2); border-bottom:1px solid var(--line);
+  }
+  .dot{ width:11px; height:11px; border-radius:50%; }
+  .dot.r{ background:#ff5f56; }
+  .dot.y{ background:#ffbd2e; }
+  .dot.g{ background:#27c93f; }
+  .terminal-title{ margin-left:8px; font-size:12px; color:var(--muted); }
+  .terminal-body{ padding:26px 24px 30px; font-size:clamp(15px, 2.4vw, 19px); }
+  .code-line{ white-space:pre-wrap; }
+  .k{ color:#ff79c6; }
+  .s{ color:var(--lime); }
+  .c{ color:var(--muted); }
+  .p{ color:var(--text); }
+  .cursor{
+    display:inline-block; width:9px; height:1.1em; background:var(--lime);
+    vertical-align:text-bottom; animation: blink 1s step-end infinite; margin-left:2px;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-sub{ margin-top:28px; color:var(--muted); font-size:17px; max-width:560px; }
+  .hero-cta{ margin-top:36px; display:flex; gap:16px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--mono); font-size:14px; padding:14px 24px; border-radius:6px;
+    border:1px solid var(--line); transition:all .2s ease; display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{ background:var(--lime); color:#0a0a0a; font-weight:600; border-color:var(--lime); }
+  .btn-primary:hover{ background:transparent; color:var(--lime); }
+  .btn-ghost{ color:var(--text); }
+  .btn-ghost:hover{ border-color:var(--lime); color:var(--lime); }
+
+  section{ padding:110px 0; border-bottom:1px solid var(--line); }
+  .section-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:52px; }
+  .section-num{ font-family:var(--mono); color:var(--lime-dim); font-size:14px; }
+  .section-title{ font-family:var(--mono); font-size:clamp(26px, 4vw, 38px); font-weight:700; letter-spacing:-0.5px; }
+  .section-title .dim{ color:var(--muted); }
+
+  .about-grid{ display:grid; grid-template-columns: 1.2fr 1fr; gap:60px; }
+  .about-text p{ color:#c9c9c9; margin-bottom:20px; max-width:60ch; font-size:17px; line-height:1.8; }
+  .about-text strong{ color:var(--lime); font-weight:600; }
+  .stack-list{ font-family:var(--mono); font-size:14px; display:grid; grid-template-columns: 1fr 1fr; gap:10px 20px; }
+  .stack-list li{
+    list-style:none; color:var(--text); padding:10px 0;
+    border-bottom:1px dashed var(--line); display:flex; justify-content:space-between;
+  }
+  .stack-list li span{ color:var(--muted); }
+
+  .project-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:26px; }
+  .card{
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; transition:transform .25s ease, border-color .25s ease;
+  }
+  .card:hover{ transform:translateY(-6px); border-color:var(--lime-dim); }
+  .card-tab{
+    display:flex; align-items:center; justify-content:space-between; padding:12px 18px;
+    background:var(--bg-panel-2); border-bottom:1px solid var(--line);
+    font-family:var(--mono); font-size:12.5px; color:var(--muted);
+    overflow:hidden;
+  }
+  .card-tab span:first-child{
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:75%;
+  }
+  .card-tab .status{ color:var(--lime); flex-shrink:0; }
+  .card-thumb{
+    height:235px;
+    background:var(--bg-panel-2);
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .card-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    filter:grayscale(10%);
+    transition:filter .25s ease, transform .25s ease;
+  }
+  .card:hover .card-thumb img{
+    filter:grayscale(0%);
+    transform:scale(1.04);
+  }
+  .card-body{ padding:22px; }
+  .card-title{ font-family:var(--mono); font-size:18px; font-weight:600; margin-bottom:10px; }
+  .card-title .ext{ color:var(--lime); }
+  .card-desc{ color:var(--muted); font-size:14.5px; margin-bottom:16px; }
+  .card-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .tag{
+    font-family:var(--mono); font-size:11.5px; color:var(--lime);
+    background:rgba(198,255,46,0.08); border:1px solid rgba(198,255,46,0.25);
+    padding:4px 10px; border-radius:20px;
+  }
+  .card-link{
+    font-family:var(--mono); font-size:13.5px; color:var(--text);
+    display:inline-flex; align-items:center; gap:6px;
+    border-bottom:1px solid var(--lime-dim); padding-bottom:2px;
+  }
+  .card-link:hover{ color:var(--lime); border-color:var(--lime); }
+
+  .contact{ border-bottom:none; }
+  .contact-inner{ background:var(--bg-panel); border:1px solid var(--line); border-radius:14px; padding:60px; text-align:center; }
+  .contact-inner h2{ font-family:var(--mono); font-size:clamp(28px, 4vw, 42px); margin-bottom:16px; }
+  .contact-inner h2 span{ color:var(--lime); }
+  .contact-inner p{ color:var(--muted); margin-bottom:36px; }
+  .contact-row{ display:flex; justify-content:center; gap:18px; flex-wrap:wrap; }
+  .contact-item{
+    font-family:var(--mono); font-size:14px; padding:14px 22px; border:1px solid var(--line);
+    border-radius:6px; color:var(--text); display:flex; align-items:center; gap:10px;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .contact-item:hover{ border-color:var(--lime); color:var(--lime); }
+  .contact-item span{ color:var(--lime-dim); }
+
+  footer{ padding:32px 0; text-align:center; font-family:var(--mono); font-size:12.5px; color:var(--muted); }
+  footer .lime{ color:var(--lime-dim); }
+
+  @media (max-width: 860px){
+    .about-grid{ grid-template-columns:1fr; }
+    .project-grid{ grid-template-columns:1fr; }
+    .nav-links{ display:none; }
+    .contact-inner{ padding:40px 24px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .cursor, .eyebrow::before{ animation:none; }
+    .card{ transition:none; }
+    .card-thumb img{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<header>
+  <nav>
+    <div class="brand">
+      <span class="tag">&lt;</span><span class="name">JSPROGRAMENT</span><span class="tag">/&gt;</span>
+    </div>
+    <div class="nav-links">
+      <a href="#about"><span>01.</span> Sobre nosotros</a>
+      <a href="#projects"><span>02.</span> Proyectos</a>
+      <a href="#contact"><span>03.</span> Contacto</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section class="hero" style="border-bottom:1px solid var(--line); padding-bottom:0;">
+    <div class="container hero-inner">
+      <div class="eyebrow">DISPONIBLE PARA NUEVOS PROYECTOS</div>
+
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="terminal-title">developer.js</div>
+        </div>
+        <div class="terminal-body">
+          <div class="code-line"><span class="k">const</span> <span class="p">developer</span> = {</div>
+          <div class="code-line">&nbsp;&nbsp;name: <span class="s">'JSPROGRAMENT'</span>,</div>
+          <div class="code-line">&nbsp;&nbsp;role: <span class="s">'Creadores y Diseñadores Web'</span>,</div>
+          <div class="code-line">&nbsp;&nbsp;status: <span class="s">'Construyo páginas a la medida de tu negocio'</span><span class="cursor"></span></div>
+          <div class="code-line">};</div>
+        </div>
+      </div>
+
+      <p class="hero-sub">
+        Cada negocio es distinto, y tu página web debería serlo también.
+        No uso plantillas genéricas ni copio y pego el mismo diseño para todos. Antes de escribir una sola línea de código, entiendo cómo funciona tu negocio: qué vendes, cómo trabajas, quién te compra y qué quieres que la gente haga al entrar a tu sitio — que te llamen, que ordenen, que agenden una cita, que conozcan tu trabajo.
+        A partir de ahí, construyo una página pensada para eso: con el diseño, el contenido y las funciones que tu negocio realmente necesita, no las que "se ven bien" en un portafolio.
+        El resultado: un sitio que se siente tuyo, funciona como tú trabajas, y ayuda a que tus clientes hagan lo que quieres que hagan.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">Ver proyectos →</a>
+        <a href="#contact" class="btn btn-ghost">Contactar</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-num">01.</span>
+        <h2 class="section-title">Sobre <span class="dim">Nosotros</span></h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            Somos <strong>JSPROGRAMENT</strong>. Diseñamos y desarrollamos páginas web a la medida de tu negocio, y complementamos con servicio de fotografía profesional — capturamos tu espacio, tus productos y tu ambiente para llenar tu sitio con contenido real, no imágenes genéricas de internet.
+          </p>
+        </div>
+
+        <ul class="stack-list">
+          <li>HTML / CSS <span>frontend</span></li>
+          <li>JavaScript <span>frontend</span></li>
+          <li>Diseño UI <span>diseño</span></li>
+          <li>Netlify-Vercel <span>Alojamiento</span></li>
+          <li>Fotografía de negocio <span>servicio</span></li>
+          <li>Neubox<span>Dominios</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-num">02.</span>
+        <h2 class="section-title">Mis <span class="dim">proyectos</span></h2>
+      </div>
+
+      <div class="project-grid">
+
+        <div class="card">
+          <div class="card-tab"><span>callicoffe.com.mx</span><span class="status">● en línea</span></div>
+          <div class="card-thumb"><img src="Calli.png" alt="Vista previa CALLI" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-title">Calli<span class="ext">.01</span></div>
+            <p class="card-desc">Página web para cafetería con menú interactivo, carrito de pedidos vía WhatsApp, pago en efectivo/transferencia y panel de administración. Desarrollado con HTML, CSS, JavaScript y Node.js, desplegado en Vercel y Neubox.</p>
+            <div class="card-tags">
+              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span><span class="tag">Vercel</span><span class="tag">Neubox</span><span class="tag">Node.js</span>
+            </div>
+            <a href="https://www.callicoffe.com.mx/" target="_blank" class="card-link">Ver sitio →</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-tab"><span>edart-redes.netlify.app</span><span class="status">● en línea</span></div>
+          <div class="card-thumb"><img src="Edart-Redes.png" alt="Vista previa EDART Redes" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-title">Escuela de Artes de Tlaxcala (Redes)<span class="ext">.02</span></div>
+            <p class="card-desc">Página de enlaces oficiales para la Escuela de Artes de Tlaxcala, con accesos directos a Facebook, Instagram y TikTok. Desarrollado con HTML, CSS y JavaScript, alojado en Netlify.</p>
+            <div class="card-tags">
+              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span><span class="tag">Netlify</span>
+            </div>
+            <a href="https://edart-redes.netlify.app/" target="_blank" class="card-link">Ver sitio →</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-tab"><span>corazon-mictlan.netlify.app</span><span class="status">● en línea</span></div>
+          <div class="card-thumb"><img src="Corazon-Mictlan.png" alt="Vista previa Corazón Mictlan" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-title">Corazón Mictlan<span class="ext">.03</span></div>
+            <p class="card-desc">Sitio web para un colectivo de arte con carrusel de artistas, catálogos de obras individuales, biografías y sección de eventos. Desarrollado con HTML, CSS y JavaScript, alojado en Netlify.</p>
+            <div class="card-tags">
+              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span><span class="tag">Netlify</span>
+            </div>
+            <a href="https://corazon-mictlan.netlify.app/" target="_blank" class="card-link">Ver sitio →</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-tab"><span>https://tunegocio.com.mx</span><span class="status">● en línea</span></div>
+          <div class="card-thumb"><img src="" alt="Vista Previa de tu negocio" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-title">Nombre de tu pagina <span class="ext">.04</span></div>
+            <p class="card-desc">Descripcion de tu pagina web</p>
+            <div class="card-tags">
+            </div>
+            <a href="https://tunegocio.com.mx" target="_blank" class="card-link">Ver sitio →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-num">03.</span>
+        <h2 class="section-title">Contacto</h2>
+      </div>
+
+      <div class="contact-inner">
+        <h2>¿Tienes un proyecto en <span>mente</span>?</h2>
+        <p>Escríbeme y hablemos de cómo puedo ayudarte a construir tu próxima página web.</p>
+        <div class="contact-row">
+          <a href="https://wa.me/522461066503?text=Hola%2C%20vengo%20de%20tu%20portafolio%20(https%3A%2F%2Fjsprograment.com)%20y%20quiero%20m%C3%A1s%20informaci%C3%B3n." target="_blank" class="contact-item"><span>&gt;</span> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container">
+    © 2026 <span class="lime">JSPROGRAMENT</span> — Todos los derechos reservados
+  </div>
+</footer>
+
+</body>
+</html>

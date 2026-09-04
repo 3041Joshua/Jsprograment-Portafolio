@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSPROGRAMENT — Paquetes</title>
+<style>
+  :root{
+    --bg:#0a0a0a; --bg-panel:#121212; --bg-panel-2:#161616; --line:#262626;
+    --lime:#c6ff2e; --lime-dim:#7a9c1e; --text:#e9e9e9; --muted:#7a7a7a;
+    --mono:'JetBrains Mono','Fira Code',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  .container{max-width:1100px;margin:0 auto;padding:0 28px;}
+  header{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:rgba(10,10,10,0.75);border-bottom:1px solid var(--line);}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;max-width:1100px;margin:0 auto;}
+  .brand{font-family:var(--mono);font-weight:600;font-size:16px;}
+  .brand .tag{color:var(--muted);} .brand .name{color:var(--lime);}
+  .back{font-family:var(--mono);font-size:13px;color:var(--muted);border:1px solid var(--line);padding:8px 14px;border-radius:6px;transition:.2s;}
+  .back:hover{color:var(--lime);border-color:var(--lime);}
+
+  .hero{padding:70px 0 40px;text-align:center;}
+  .hero h1{font-family:var(--mono);font-size:clamp(28px,5vw,44px);}
+  .hero h1 span{color:var(--lime);}
+  .hero p{color:var(--muted);margin-top:14px;max-width:600px;margin-left:auto;margin-right:auto;}
+
+  .tabs{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;padding:20px 0 50px;}
+  .tab-btn{
+    font-family:var(--mono);font-size:14px;padding:14px 28px;border-radius:8px;
+    border:1px solid var(--line);background:var(--bg-panel);cursor:pointer;color:var(--text);
+    transition:.2s;
+  }
+  .tab-btn:hover{border-color:var(--lime-dim);}
+  .tab-btn.active{background:var(--lime);color:#0a0a0a;font-weight:600;border-color:var(--lime);}
+
+  .package{display:none;padding-bottom:100px;}
+  .package.active{display:block;}
+
+  .price-box{
+    font-family:var(--mono);background:var(--bg-panel);border:1px solid var(--line);
+    border-radius:10px;padding:24px;max-width:520px;margin:0 auto 50px;
+  }
+  .price-box h3{color:var(--lime);font-size:16px;margin-bottom:14px;text-align:center;}
+  .price-row{display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px dashed var(--line);color:var(--muted);}
+  .price-row span:last-child{color:var(--text);}
+
+  .step{
+    display:grid;grid-template-columns:1fr 260px;gap:26px;
+    background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;
+    padding:22px;margin-bottom:20px;align-items:center;
+  }
+  .step-num{font-family:var(--mono);color:var(--lime);font-size:13px;margin-bottom:6px;}
+  .step-title{font-family:var(--mono);font-size:17px;font-weight:600;margin-bottom:8px;}
+  .step-desc{color:var(--muted);font-size:14px;}
+
+  .step-photo{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .photo-frame{
+    width:100%;height:150px;border:1px solid var(--line);border-radius:8px;
+    background:var(--bg-panel-2);display:flex;align-items:center;justify-content:center;
+    overflow:hidden;position:relative;cursor:pointer;
+  }
+  .photo-frame img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-frame .count{
+    position:absolute;bottom:6px;right:6px;font-family:var(--mono);font-size:11px;
+    background:rgba(0,0,0,0.7);color:var(--lime);padding:2px 8px;border-radius:20px;
+  }
+
+  .lightbox{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox-box{ max-width:900px;width:100%;text-align:center; }
+  .lightbox-img{ max-width:100%;max-height:70vh;border-radius:8px;border:1px solid var(--line); }
+  .lightbox-thumbs{ display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap; }
+  .lightbox-thumbs img{
+    width:70px;height:70px;object-fit:cover;border-radius:6px;border:2px solid var(--line);cursor:pointer;
+  }
+  .lightbox-thumbs img.active{ border-color:var(--lime); }
+  .lightbox-close{
+    position:absolute;top:20px;right:30px;font-family:var(--mono);font-size:26px;color:var(--text);
+    cursor:pointer;
+  }
+  .lightbox-nav{
+    font-family:var(--mono);font-size:30px;color:var(--lime);cursor:pointer;
+    padding:0 20px;user-select:none;
+  }
+  .lightbox-row{ display:flex;align-items:center;justify-content:center;gap:10px; }
+
+  @media (max-width:700px){
+    .step{grid-template-columns:1fr;}
+  }
+
+  footer{padding:32px 0;text-align:center;font-family:var(--mono);font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="brand"><span class="tag">&lt;</span><span class="name">JSPROGRAMENT</span><span class="tag">/&gt;</span></div>
+    <a href="index.html" class="back">← Volver al portafolio</a>
+  </nav>
+</header>
+
+<div class="hero container">
+  <h1>Nuestros <span>Paquetes</span></h1>
+  <p>Elige el paquete que mejor se adapte a tu negocio. Cada paso incluye descripción y una foto de ejemplo (puedes subir tu propia imagen JPG o PNG).</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" data-target="basico">Básico</button>
+  <button class="tab-btn" data-target="medio">Medio</button>
+  <button class="tab-btn" data-target="alto">Alto</button>
+  <button class="tab-btn" data-target="plus">Plus</button>
+</div>
+
+<div class="container">
+
+  <!-- BASICO -->
+  <div class="package active" id="basico">
+    <div class="price-box">
+      <h3>COSTO TOTAL PAQUETE BÁSICO</h3>
+      <div class="price-row"><span>De 0 a 100 platillos</span><span>$4,000</span></div>
+      <div class="price-row"><span>De 101 a 150 platillos</span><span>$5,500</span></div>
+      <div class="price-row"><span>De 151 a 200 platillos</span><span>$7,000</span></div>
+      <div class="price-row"><span>De 201 a 250 platillos</span><span>$8,500</span></div>
+    </div>
+    <div class="steps" data-package="basico"></div>
+  </div>
+
+  <!-- MEDIO -->
+  <div class="package" id="medio">
+    <div class="price-box">
+      <h3>COSTO TOTAL PAQUETE MEDIO</h3>
+      <div class="price-row"><span>De 0 a 100 platillos</span><span>$5,000</span></div>
+      <div class="price-row"><span>De 101 a 150 platillos</span><span>$6,500</span></div>
+      <div class="price-row"><span>De 151 a 200 platillos</span><span>$8,000</span></div>
+      <div class="price-row"><span>De 201 a 250 platillos</span><span>$9,500</span></div>
+    </div>
+    <div class="steps" data-package="medio"></div>
+  </div>
+
+  <!-- ALTO -->
+  <div class="package" id="alto">
+    <div class="price-box">
+      <h3>COSTO TOTAL PAQUETE ALTO</h3>
+      <div class="price-row"><span>De 0 a 100 platillos</span><span>$7,000</span></div>
+      <div class="price-row"><span>De 101 a 150 platillos</span><span>$8,500</span></div>
+      <div class="price-row"><span>De 151 a 200 platillos</span><span>$10,000</span></div>
+      <div class="price-row"><span>De 201 a 250 platillos</span><span>$11,500</span></div>
+    </div>
+    <div class="steps" data-package="alto"></div>
+  </div>
+
+  <!-- PLUS -->
+  <div class="package" id="plus">
+    <div class="price-box">
+      <h3>COSTO TOTAL PAQUETE PLUS</h3>
+      <div class="price-row"><span>De 0 a 100 platillos</span><span>$8,000</span></div>
+      <div class="price-row"><span>De 101 a 150 platillos</span><span>$9,500</span></div>
+      <div class="price-row"><span>De 151 a 200 platillos</span><span>$11,000</span></div>
+      <div class="price-row"><span>De 201 a 250 platillos</span><span>$12,500</span></div>
+    </div>
+    <div class="steps" data-package="plus"></div>
+  </div>
+
+</div>
+
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" id="lightboxClose">×</span>
+  <div class="lightbox-box">
+    <div class="lightbox-row">
+      <span class="lightbox-nav" id="lbPrev">‹</span>
+      <img class="lightbox-img" id="lightboxImg" src="">
+      <span class="lightbox-nav" id="lbNext">›</span>
+    </div>
+    <div class="lightbox-thumbs" id="lightboxThumbs"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">© 2026 <span style="color:var(--lime-dim)">JSPROGRAMENT</span> — Todos los derechos reservados</div>
+</footer>
+
+<script>
+const DATA = {
+  basico: [
+    ["DISEÑO DE PAGINA","CREACIÓN DEL DISEÑO DE LA PÁGINA"],
+    ["SECCIÓN HORARIOS","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE SE ENCUENTRAN LOS DÍAS QUE ABREN Y SUS HORARIOS"],
+    ["SECCIÓN UBICACIÓN","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE ESTÁ SU UBICACIÓN EN GOOGLE MAPS"],
+    ["SECCIÓN REDES SOCIALES","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE SE ENCUENTRAN TODAS SUS REDES SOCIALES"],
+    ["SECCIÓN MENÚ","BOTÓN QUE TE LLEVA DIRECTO AL APARTADO DONDE SE ENCUENTRA TODO SU MENÚ"],
+    ["CAJA DE PLATILLOS","CADA PLATILLO POR INDIVIDUAL CON DESCRIPCIÓN Y PRECIO"],
+    ["PAQUETE FOTOGRÁFICO","PAQUETE DE FOTOS DE TODOS LOS PRODUCTOS DEL NEGOCIO"],
+    ["OPCIONES DE PLATILLOS","CLASIFICACIÓN DEL PLATILLO, INGREDIENTES EXTRAS Y/O ADEREZOS A ELEGIR"],
+    ["COMENTARIO GENERAL","CAJA DE COMENTARIO DEL CLIENTE QUE SE MANDA COMO MENSAJE AL WHATSAPP JUNTO CON SU PEDIDO"],
+    ["CARRITO DE CLIENTE","BOTÓN DONDE SE ENCUENTRA EL PEDIDO DEL CLIENTE"],
+    ["FORMULARIO DEL CLIENTE","DATOS DEL CLIENTE (NOMBRE, TELÉFONO, DIRECCIÓN DE ENTREGA Y ESPECIFICACIONES DE LA ENTREGA)"],
+    ["FORMA DE PAGO DEL CLIENTE","DECISIÓN DE FORMA DE PAGO EN TRANSFERENCIA, EFECTIVO O TARJETA"]
+  ],
+  medio: [
+    ["DISEÑO DE PAGINA","CREACIÓN DEL DISEÑO DE LA PÁGINA"],
+    ["SECCIÓN HORARIOS","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE SE ENCUENTRAN LOS DÍAS QUE ABREN Y SUS HORARIOS"],
+    ["SECCIÓN UBICACIÓN","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE ESTÁ SU UBICACIÓN EN GOOGLE MAPS"],
+    ["SECCIÓN REDES SOCIALES","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE SE ENCUENTRAN TODAS SUS REDES SOCIALES"],
+    ["SECCIÓN MENÚ","BOTÓN QUE TE LLEVA DIRECTO AL APARTADO DONDE SE ENCUENTRA TODO SU MENÚ"],
+    ["CAJA DE PLATILLOS","CADA PLATILLO POR INDIVIDUAL CON DESCRIPCIÓN Y PRECIO"],
+    ["PAQUETE FOTOGRÁFICO","PAQUETE DE FOTOS DE TODOS LOS PRODUCTOS DEL NEGOCIO"],
+    ["OPCIONES DE PLATILLOS","CLASIFICACIÓN DEL PLATILLO, INGREDIENTES EXTRAS Y/O ADEREZOS A ELEGIR"],
+    ["COMENTARIO GENERAL","CAJA DE COMENTARIO DEL CLIENTE QUE SE MANDA COMO MENSAJE AL WHATSAPP JUNTO CON SU PEDIDO"],
+    ["CARRITO DE CLIENTE","BOTÓN DONDE SE ENCUENTRA EL PEDIDO DEL CLIENTE"],
+    ["FORMULARIO DEL CLIENTE","DATOS DEL CLIENTE (NOMBRE, TELÉFONO, DIRECCIÓN DE ENTREGA Y ESPECIFICACIONES DE LA ENTREGA)"],
+    ["FORMA DE PAGO DEL CLIENTE","DECISIÓN DE FORMA DE PAGO EN TRANSFERENCIA, EFECTIVO O TARJETA"],
+    ["CALIFICACIÓN DE PRODUCTO","CALIFICACIÓN QUE DA EL CLIENTE DEL PLATILLO, SE MANDA AL PANEL DE ADMINISTRACIÓN COMO ESTADÍSTICA"],
+    ["COMPARTIR PLATILLO INDIVIDUAL","OPCIÓN DE COMPARTIR UN PLATILLO MEDIANTE ENLACE AL WHATSAPP"]
+  ],
+  alto: [
+    ["DISEÑO DE PAGINA","CREACIÓN DEL DISEÑO DE LA PÁGINA"],
+    ["SECCIÓN HORARIOS","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE SE ENCUENTRAN LOS DÍAS QUE ABREN Y SUS HORARIOS"],
+    ["SECCIÓN UBICACIÓN","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE ESTÁ SU UBICACIÓN EN GOOGLE MAPS"],
+    ["SECCIÓN REDES SOCIALES","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE SE ENCUENTRAN TODAS SUS REDES SOCIALES"],
+    ["SECCIÓN MENÚ","BOTÓN QUE TE LLEVA DIRECTO AL APARTADO DONDE SE ENCUENTRA TODO SU MENÚ"],
+    ["CAJA DE PLATILLOS","CADA PLATILLO POR INDIVIDUAL CON DESCRIPCIÓN Y PRECIO"],
+    ["PAQUETE FOTOGRÁFICO","PAQUETE DE FOTOS DE TODOS LOS PRODUCTOS DEL NEGOCIO"],
+    ["OPCIONES DE PLATILLOS","CLASIFICACIÓN DEL PLATILLO, INGREDIENTES EXTRAS Y/O ADEREZOS A ELEGIR"],
+    ["COMENTARIO GENERAL","CAJA DE COMENTARIO DEL CLIENTE QUE SE MANDA COMO MENSAJE AL WHATSAPP JUNTO CON SU PEDIDO"],
+    ["CARRITO DE CLIENTE","BOTÓN DONDE SE ENCUENTRA EL PEDIDO DEL CLIENTE"],
+    ["FORMULARIO DEL CLIENTE","DATOS DEL CLIENTE (NOMBRE, TELÉFONO, DIRECCIÓN DE ENTREGA Y ESPECIFICACIONES DE LA ENTREGA)"],
+    ["FORMA DE PAGO DEL CLIENTE","DECISIÓN DE FORMA DE PAGO EN TRANSFERENCIA, EFECTIVO O TARJETA"],
+    ["CALIFICACIÓN DE PRODUCTO","CALIFICACIÓN QUE DA EL CLIENTE DEL PLATILLO, SE MANDA AL PANEL DE ADMINISTRACIÓN COMO ESTADÍSTICA"],
+    ["COMPARTIR PLATILLO INDIVIDUAL","OPCIÓN DE COMPARTIR UN PLATILLO MEDIANTE ENLACE AL WHATSAPP"],
+    ["MODO OBSCURO DE LA PÁGINA","OPCIÓN DE QUE LA PÁGINA SE TORNE DE UN TONO OBSCURO"],
+    ["PLATILLOS FAVORITOS","OPCIÓN DE AGREGAR UN PRODUCTO A UNA SECCIÓN DE FAVORITOS AGILIZANDO PEDIDOS SUBSECUENTES"],
+    ["BUSCADOR DE PLATILLOS","BARRA DE BÚSQUEDA CON AUTOCOMPLETADO QUE FILTRA LOS PLATILLOS CON TODO Y PRECIOS"],
+    ["BUSCADOR POR RANGO DE PRECIOS","OPCIÓN DE BUSCAR POR RANGO DE PRECIO UN PLATILLO SEGÚN EL PRESUPUESTO DEL CLIENTE"]
+  ],
+  plus: [
+    ["DISEÑO DE PAGINA","CREACIÓN DEL DISEÑO DE LA PÁGINA"],
+    ["SECCIÓN HORARIOS","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE SE ENCUENTRAN LOS DÍAS QUE ABREN Y SUS HORARIOS"],
+    ["SECCIÓN UBICACIÓN","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE ESTÁ SU UBICACIÓN EN GOOGLE MAPS"],
+    ["SECCIÓN REDES SOCIALES","BOTÓN QUE TE LLEVA DIRECTO A UN APARTADO DONDE SE ENCUENTRAN TODAS SUS REDES SOCIALES"],
+    ["SECCIÓN MENÚ","BOTÓN QUE TE LLEVA DIRECTO AL APARTADO DONDE SE ENCUENTRA TODO SU MENÚ"],
+    ["CAJA DE PLATILLOS","CADA PLATILLO POR INDIVIDUAL CON DESCRIPCIÓN Y PRECIO"],
+    ["PAQUETE FOTOGRÁFICO","PAQUETE DE FOTOS DE TODOS LOS PRODUCTOS DEL NEGOCIO"],
+    ["OPCIONES DE PLATILLOS","CLASIFICACIÓN DEL PLATILLO, INGREDIENTES EXTRAS Y/O ADEREZOS A ELEGIR"],
+    ["COMENTARIO GENERAL","CAJA DE COMENTARIO DEL CLIENTE QUE SE MANDA COMO MENSAJE AL WHATSAPP JUNTO CON SU PEDIDO"],
+    ["CARRITO DE CLIENTE","BOTÓN DONDE SE ENCUENTRA EL PEDIDO DEL CLIENTE"],
+    ["FORMULARIO DEL CLIENTE","DATOS DEL CLIENTE (NOMBRE, TELÉFONO, DIRECCIÓN DE ENTREGA Y ESPECIFICACIONES DE LA ENTREGA)"],
+    ["FORMA DE PAGO DEL CLIENTE","DECISIÓN DE FORMA DE PAGO EN TRANSFERENCIA, EFECTIVO O TARJETA"],
+    ["CALIFICACIÓN DE PRODUCTO","CALIFICACIÓN QUE DA EL CLIENTE DEL PLATILLO, SE MANDA AL PANEL DE ADMINISTRACIÓN COMO ESTADÍSTICA"],
+    ["COMPARTIR PLATILLO INDIVIDUAL","OPCIÓN DE COMPARTIR UN PLATILLO MEDIANTE ENLACE AL WHATSAPP"],
+    ["MODO OBSCURO DE LA PÁGINA","OPCIÓN DE QUE LA PÁGINA SE TORNE DE UN TONO OBSCURO"],
+    ["PLATILLOS FAVORITOS","OPCIÓN DE AGREGAR UN PRODUCTO A UNA SECCIÓN DE FAVORITOS AGILIZANDO PEDIDOS SUBSECUENTES"],
+    ["BUSCADOR DE PLATILLOS","BARRA DE BÚSQUEDA CON AUTOCOMPLETADO QUE FILTRA LOS PLATILLOS CON TODO Y PRECIOS"],
+    ["BUSCADOR POR RANGO DE PRECIOS","OPCIÓN DE BUSCAR POR RANGO DE PRECIO UN PLATILLO SEGÚN EL PRESUPUESTO DEL CLIENTE"],
+    ["PANEL DE ESTADÍSTICAS","EL DUEÑO VISUALIZA SUS PLATILLOS MÁS FAVORITEADOS, MÁS BUSCADOS, MÁS AGREGADOS AL CARRITO, MÁS COMPARTIDOS Y MEJOR CALIFICADOS"],
+    ["PANEL DE ADMINISTRACIÓN","CONTROL TOTAL PARA EL DUEÑO: MODIFICAR, ELIMINAR O AGREGAR NUEVOS PLATILLOS, ASÍ COMO SUS HORARIOS"]
+  ]
+};
+
+const stepNum = (pkgIndex, i) => `${pkgIndex}.${i}`;
+const pkgIndexMap = {basico:1, medio:2, alto:3, plus:4};
+
+// ===== IMAGENES =====
+// Cada paso puede tener VARIAS fotos: pon un arreglo con las rutas.
+// Ejemplo: basico_0: ['img/basico-0-a.jpg', 'img/basico-0-b.jpg', 'img/basico-0-c.jpg']
+// La clave es "paquete_indice" (indice empieza en 0, igual que el orden en DATA).
+// Si dejas [] no se muestra imagen.
+const IMAGES = {
+  basico_0:['DISEÑO/1-DISEÑO.png', 'DISEÑO/2-DISEÑO.png', 'DISEÑO/3-DISEÑO.png'],  basico_1: ['SECCION HORARIOS/1-HRA.png', 'SECCION HORARIOS/2-HRA.png'],  basico_2: ['SECCION UBICACION/1-UBI.png', 'SECCION UBICACION/2-UBI.png'],  basico_3: ['SECCION REDES/1-RS.png'],
+  basico_4: ['MENU/1-MNU.png', 'MENU/2-MNU.png'],  basico_5: ['PLATILLO/1-PLT.png'],  basico_6: ['FOTO/1-FTO.jpeg'],  basico_7: ['OPCIONES/1-OPC.png', 'OPCIONES/2-OPC.png', 'OPCIONES/3-OPC.png'],
+  basico_8: ['COMENTARIO/1-COM.png'],  basico_9: ['CARRITO/1-CAR.png','CARRITO/2-CAR.png'],  basico_10: ['FORMULARIO/1-FRM.png'], basico_11: ['FORMA DE PAGO/1-FP.png'],
+
+  medio_0: ['DISEÑO/1-DISEÑO.png', 'DISEÑO/2-DISEÑO.png', 'DISEÑO/3-DISEÑO.png'],  medio_1: ['SECCION HORARIOS/1-HRA.png', 'SECCION HORARIOS/2-HRA.png'],  medio_2: ['SECCION UBICACION/1-UBI.png', 'SECCION UBICACION/2-UBI.png'],  medio_3: ['SECCION REDES/1-RS.png'],
+  medio_4: ['MENU/1-MNU.png', 'MENU/2-MNU.png'],  medio_5: ['PLATILLO/1-PLT.png'],  medio_6: ['FOTO/1-FTO.jpeg'],  medio_7: ['OPCIONES/1-OPC.png', 'OPCIONES/2-OPC.png', 'OPCIONES/3-OPC.png'],
+  medio_8: ['COMENTARIO/1-COM.png'],  medio_9: ['CARRITO/1-CAR.png','CARRITO/2-CAR.png'],  medio_10: ['FORMULARIO/1-FRM.png'], medio_11: ['FORMA DE PAGO/1-FP.png'],
+  medio_12: [], medio_13: [],
+
+  alto_0: ['DISEÑO/1-DISEÑO.png', 'DISEÑO/2-DISEÑO.png', 'DISEÑO/3-DISEÑO.png'],  alto_1: ['SECCION HORARIOS/1-HRA.png', 'SECCION HORARIOS/2-HRA.png'],  alto_2: ['SECCION UBICACION/1-UBI.png', 'SECCION UBICACION/2-UBI.png'],  alto_3: ['SECCION REDES/1-RS.png'],
+  alto_4: ['MENU/1-MNU.png', 'MENU/2-MNU.png'],  alto_5: ['PLATILLO/1-PLT.png'],  alto_6: ['FOTO/1-FTO.jpeg'],  alto_7: ['OPCIONES/1-OPC.png', 'OPCIONES/2-OPC.png', 'OPCIONES/3-OPC.png'],
+  alto_8: ['COMENTARIO/1-COM.png'],  alto_9: ['CARRITO/1-CAR.png','CARRITO/2-CAR.png'],  alto_10: ['FORMULARIO/1-FRM.png'], alto_11: ['FORMA DE PAGO/1-FP.png'],
+  alto_12: [], alto_13: [], alto_14: [], alto_15: [],
+  alto_16: [], alto_17: [],
+
+  plus_0: ['DISEÑO/1-DISEÑO.png', 'DISEÑO/2-DISEÑO.png', 'DISEÑO/3-DISEÑO.png'],  plus_1: ['SECCION HORARIOS/1-HRA.png', 'SECCION HORARIOS/2-HRA.png'],  plus_2: ['SECCION UBICACION/1-UBI.png', 'SECCION UBICACION/2-UBI.png'],  plus_3: ['SECCION REDES/1-RS.png'],
+  plus_4: ['MENU/1-MNU.png', 'MENU/2-MNU.png'],  plus_5: ['PLATILLO/1-PLT.png'],  plus_6: ['FOTO/1-FTO.jpeg'],  plus_7: ['OPCIONES/1-OPC.png', 'OPCIONES/2-OPC.png', 'OPCIONES/3-OPC.png'],
+  plus_8: ['COMENTARIO/1-COM.png'],  plus_9: ['CARRITO/1-CAR.png','CARRITO/2-CAR.png'],  plus_10: ['FORMULARIO/1-FRM.png'], plus_11: ['FORMA DE PAGO/1-FP.png'],
+  plus_12: [], plus_13: [], plus_14: [], plus_15: [],
+  plus_16: [], plus_17: [], plus_18: [], plus_19: []
+};
+// =====================
+
+function buildSteps(){
+  Object.keys(DATA).forEach(pkg=>{
+    const container = document.querySelector(`.steps[data-package="${pkg}"]`);
+    const items = DATA[pkg];
+    const idx = pkgIndexMap[pkg];
+    items.forEach((item, i)=>{
+      const [title, desc] = item;
+      const num = stepNum(idx, i);
+      const key = `${pkg}_${i}`;
+      const imgs = IMAGES[key] || [];
+      const div = document.createElement('div');
+      div.className = 'step';
+      div.innerHTML = `
+        <div>
+          <div class="step-num">${num}</div>
+          <div class="step-title">${title}</div>
+          <div class="step-desc">${desc}</div>
+        </div>
+        <div class="step-photo">
+          <div class="photo-frame" data-key="${key}" data-title="${title}">
+            ${imgs.length ? `<img src="${imgs[0]}" alt="${title}"><span class="count">1/${imgs.length}</span>` : `<span class="placeholder">Sin imagen</span>`}
+          </div>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  });
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.package').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.getAttribute('data-target')).classList.add('active');
+  });
+});
+
+buildSteps();
+
+// ===== LIGHTBOX =====
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxThumbs = document.getElementById('lightboxThumbs');
+let currentImgs = [];
+let currentIndex = 0;
+
+function openLightbox(imgs, index){
+  if(!imgs.length) return;
+  currentImgs = imgs;
+  currentIndex = index;
+  renderLightbox();
+  lightbox.classList.add('open');
+}
+function renderLightbox(){
+  lightboxImg.src = currentImgs[currentIndex];
+  lightboxThumbs.innerHTML = currentImgs.map((src, i)=>
+    `<img src="${src}" class="${i===currentIndex ? 'active' : ''}" data-i="${i}">`
+  ).join('');
+}
+function closeLightbox(){ lightbox.classList.remove('open'); }
+
+document.addEventListener('click', (e)=>{
+  const frame = e.target.closest('.photo-frame');
+  if(frame){
+    const key = frame.getAttribute('data-key');
+    const imgs = IMAGES[key] || [];
+    openLightbox(imgs, 0);
+  }
+  if(e.target.matches('.lightbox-thumbs img')){
+    currentIndex = parseInt(e.target.getAttribute('data-i'));
+    renderLightbox();
+  }
+});
+
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) closeLightbox(); });
+document.getElementById('lbPrev').addEventListener('click', ()=>{
+  currentIndex = (currentIndex - 1 + currentImgs.length) % currentImgs.length;
+  renderLightbox();
+});
+document.getElementById('lbNext').addEventListener('click', ()=>{
+  currentIndex = (currentIndex + 1) % currentImgs.length;
+  renderLightbox();
+});
+document.addEventListener('keydown', (e)=>{
+  if(!lightbox.classList.contains('open')) return;
+  if(e.key === 'Escape') closeLightbox();
+  if(e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
+  if(e.key === 'ArrowRight') document.getElementById('lbNext').click();
+});
+</script>
+</body>
+</html>

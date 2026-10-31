@@ -98,8 +98,7 @@
   }
   @keyframes blink{ 50%{ opacity:0; } }
 
-  .hero-sub{ margin-top:28px; color:var(--muted); font-size:17px; max-width:560px; }
-  .hero-cta{ margin-top:36px; display:flex; gap:16px; flex-wrap:wrap; }
+  .hero-cta{ margin-top:40px; display:flex; gap:16px; flex-wrap:wrap; }
   .btn{
     font-family:var(--mono); font-size:14px; padding:14px 24px; border-radius:6px;
     border:1px solid var(--line); transition:all .2s ease; display:inline-flex; align-items:center; gap:8px;
@@ -115,8 +114,9 @@
   .section-title{ font-family:var(--mono); font-size:clamp(26px, 4vw, 38px); font-weight:700; letter-spacing:-0.5px; }
   .section-title .dim{ color:var(--muted); }
 
-  .about-grid{ display:grid; grid-template-columns: 1.2fr 1fr; gap:60px; }
+  .about-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:start; }
   .about-text p{ color:#c9c9c9; margin-bottom:20px; max-width:60ch; font-size:17px; line-height:1.8; }
+  .about-text p:last-child{ margin-bottom:0; }
   .about-text strong{ color:var(--lime); font-weight:600; }
   .stack-list{ font-family:var(--mono); font-size:14px; display:grid; grid-template-columns: 1fr 1fr; gap:10px 20px; }
   .stack-list li{
@@ -273,13 +273,6 @@
         </div>
       </div>
 
-      <p class="hero-sub">
-        Cada negocio es distinto, y tu página web debería serlo también.
-        No uso plantillas genéricas ni copio y pego el mismo diseño para todos. Antes de escribir una sola línea de código, entiendo cómo funciona tu negocio: qué vendes, cómo trabajas, quién te compra y qué quieres que la gente haga al entrar a tu sitio — que te llamen, que ordenen, que agenden una cita, que conozcan tu trabajo.
-        A partir de ahí, construyo una página pensada para eso: con el diseño, el contenido y las funciones que tu negocio realmente necesita, no las que "se ven bien" en un portafolio.
-        El resultado: un sitio que se siente tuyo, funciona como tú trabajas, y ayuda a que tus clientes hagan lo que quieres que hagan.
-      </p>
-
       <div class="hero-cta">
         <a href="#projects" class="btn btn-primary">Ver proyectos →</a>
         <a href="#contact" class="btn btn-ghost">Contactar</a>
@@ -299,8 +292,19 @@
           <p>
             Somos <strong>JSPROGRAMENT</strong>. Diseñamos y desarrollamos páginas web a la medida de tu negocio, y complementamos con servicio de fotografía profesional — capturamos tu espacio, tus productos y tu ambiente para llenar tu sitio con contenido real, no imágenes genéricas de internet.
           </p>
+           <p>
+            Cada negocio es distinto, y tu página web debería serlo también. No uso plantillas genéricas ni copio y pego el mismo diseño para todos. Antes de escribir una sola línea de código, entiendo cómo funciona tu negocio: qué vendes, cómo trabajas, quién te compra y qué quieres que la gente haga al entrar a tu sitio — que te llamen, que ordenen, que agenden una cita, que conozcan tu trabajo.
+          </p>
         </div>
 
+        <div class="about-text">
+          <p>
+            A partir de ahí, construyo una página pensada para eso: con el diseño, el contenido y las funciones que tu negocio realmente necesita, no las que "se ven bien" en un portafolio.
+          </p>
+          <p>
+            El resultado: un sitio que se siente tuyo, funciona como tú trabajas, y ayuda a que tus clientes hagan lo que quieres que hagan.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -318,10 +322,10 @@
           <div class="card-tab"><span>Ichiban-Sushi</span><span class="status">● En linea</span></div>
           <div class="card-thumb"><img src="Ichiban-Sushi.png" alt="Vista previa Ichiban-Sushi" loading="lazy"></div>
           <div class="card-body">
-            <div class="card-title">Ichiban-Sushi<span class="ext">.05</span></div>
+            <div class="card-title">Ichiban-Sushi<span class="ext">.01</span></div>
             <p class="card-desc">Sitio web para un restaurante de sushi con menú digital, sistema de pedidos en línea y sección de promociones.</p>
             <div class="card-tags">
-              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span><span class="tag">Netlify</span>
+             
             </div>
             <a href="https://ichiban-sushi.diacomputacion.com.mx/" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="Descargar aplicación Android">Ver sitio →</a>
           </div>
@@ -331,10 +335,10 @@
           <div class="card-tab"><span>callicoffe.com.mx</span><span class="status">● en línea</span></div>
           <div class="card-thumb"><img src="Calli.png" alt="Vista previa CALLI" loading="lazy"></div>
           <div class="card-body">
-            <div class="card-title">Calli<span class="ext">.01</span></div>
+            <div class="card-title">Calli<span class="ext">.02</span></div>
             <p class="card-desc">Página web para cafetería con menú interactivo, carrito de pedidos vía WhatsApp, pago en efectivo/transferencia y panel de administración. Desarrollado con HTML, CSS, JavaScript y Node.js, desplegado en Vercel y Neubox.</p>
             <div class="card-tags">
-              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span><span class="tag">Vercel</span><span class="tag">Neubox</span><span class="tag">Node.js</span>
+            
             </div>
             <a href="https://www.callicoffe.com.mx/" target="_blank" class="card-link">Ver sitio →</a>
           </div>
@@ -344,10 +348,10 @@
           <div class="card-tab"><span>edart-redes.netlify.app</span><span class="status">● en línea</span></div>
           <div class="card-thumb"><img src="Edart-Redes.png" alt="Vista previa EDART Redes" loading="lazy"></div>
           <div class="card-body">
-            <div class="card-title">Escuela de Artes de Tlaxcala (Redes)<span class="ext">.02</span></div>
+            <div class="card-title">Escuela de Artes de Tlaxcala (Redes)<span class="ext">.03</span></div>
             <p class="card-desc">Página de enlaces oficiales para la Escuela de Artes de Tlaxcala, con accesos directos a Facebook, Instagram y TikTok. Desarrollado con HTML, CSS y JavaScript, alojado en Netlify.</p>
             <div class="card-tags">
-              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span><span class="tag">Netlify</span>
+             
             </div>
             <a href="https://edart-redes.netlify.app/" target="_blank" class="card-link">Ver sitio →</a>
           </div>
@@ -357,10 +361,10 @@
           <div class="card-tab"><span>corazon-mictlan.netlify.app</span><span class="status">● en línea</span></div>
           <div class="card-thumb"><img src="Corazon-Mictlan.png" alt="Vista previa Corazón Mictlan" loading="lazy"></div>
           <div class="card-body">
-            <div class="card-title">Corazón Mictlan<span class="ext">.03</span></div>
+            <div class="card-title">Corazón Mictlan<span class="ext">.04</span></div>
             <p class="card-desc">Sitio web para un colectivo de arte con carrusel de artistas, catálogos de obras individuales, biografías y sección de eventos. Desarrollado con HTML, CSS y JavaScript, alojado en Netlify.</p>
             <div class="card-tags">
-              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span><span class="tag">Netlify</span>
+           
             </div>
             <a href="https://corazon-mictlan.netlify.app/" target="_blank" class="card-link">Ver sitio →</a>
           </div>
@@ -370,10 +374,10 @@
           <div class="card-tab"><span>School Reminder</span><span class="status">● disponible</span></div>
           <div class="card-thumb"><img src="School_Reminder.png" alt="Vista previa School Reminder" loading="lazy"></div>
           <div class="card-body">
-            <div class="card-title">School Reminder<span class="ext">.04</span></div>
+            <div class="card-title">School Reminder<span class="ext">.05</span></div>
             <p class="card-desc">School Reminder es una aplicacion de agenda escolar donde puedes tener toda tu estancia en la escuela mas controlada.</p>
             <div class="card-tags">
-              <span class="tag">Android</span><span class="tag">Agenda</span><span class="tag">App</span>
+             
             </div>
             <a href="https://school-reminder-official.netlify.app/" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="Descargar aplicación Android">Ver sitio →</a>
           </div>
@@ -384,7 +388,7 @@
         <div class="packages-inner">
           <h2>Elige el <span>paquete</span> ideal para tu negocio</h2>
           <p>Básico, Medio, Alto y Plus. Revisa qué incluye cada uno, paso a paso, con su descripción y ejemplos.</p>
-          <a href="paquetes.html" class="btn btn-primary">Ver paquetes →</a>
+          <a href="index.html" class="btn btn-primary">Ver paquetes →</a>
         </div>
 
       </div>

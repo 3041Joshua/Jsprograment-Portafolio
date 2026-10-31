@@ -125,12 +125,17 @@
   }
   .stack-list li span{ color:var(--muted); }
 
-  .project-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:26px; }
+  .project-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:26px; align-items:stretch; }
   .card{
     background:var(--bg-panel); border:1px solid var(--line); border-radius:10px;
-    overflow:hidden; transition:transform .25s ease, border-color .25s ease;
+    overflow:hidden; transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    display:flex; flex-direction:column; height:100%; min-width:0;
+    box-shadow:0 18px 40px -32px rgba(0,0,0,0.9);
   }
-  .card:hover{ transform:translateY(-6px); border-color:var(--lime-dim); }
+  .card:hover{
+    transform:translateY(-6px); border-color:var(--lime-dim);
+    box-shadow:0 26px 50px -30px rgba(198,255,46,0.16);
+  }
   .card-tab{
     display:flex; align-items:center; justify-content:space-between; padding:12px 18px;
     background:var(--bg-panel-2); border-bottom:1px solid var(--line);
@@ -143,6 +148,7 @@
   .card-tab .status{ color:var(--lime); flex-shrink:0; }
   .card-thumb{
     height:235px;
+    flex:0 0 auto;
     background:var(--bg-panel-2);
     border-bottom:1px solid var(--line);
     overflow:hidden;
@@ -151,6 +157,7 @@
     width:100%;
     height:100%;
     object-fit:cover;
+    object-position:top center;
     display:block;
     filter:grayscale(10%);
     transition:filter .25s ease, transform .25s ease;
@@ -159,7 +166,7 @@
     filter:grayscale(0%);
     transform:scale(1.04);
   }
-  .card-body{ padding:22px; }
+  .card-body{ padding:22px; display:flex; flex-direction:column; flex:1 1 auto; }
   .card-title{ font-family:var(--mono); font-size:18px; font-weight:600; margin-bottom:10px; }
   .card-title .ext{ color:var(--lime); }
   .card-desc{ color:var(--muted); font-size:14.5px; margin-bottom:16px; }
@@ -173,8 +180,25 @@
     font-family:var(--mono); font-size:13.5px; color:var(--text);
     display:inline-flex; align-items:center; gap:6px;
     border-bottom:1px solid var(--lime-dim); padding-bottom:2px;
+    margin-top:auto; align-self:flex-start;
   }
   .card-link:hover{ color:var(--lime); border-color:var(--lime); }
+
+  .packages-inner{
+    grid-column:1 / -1;
+    background:var(--bg-panel); border:1px solid var(--line); border-radius:14px;
+    padding:44px 40px; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    margin-top:6px;
+    background-image:radial-gradient(circle at 50% 0%, rgba(198,255,46,0.07), transparent 65%);
+  }
+  .packages-inner h2{
+    font-family:var(--mono); font-size:clamp(22px, 3vw, 30px); font-weight:700;
+    letter-spacing:-0.5px; line-height:1.3;
+  }
+  .packages-inner h2 span{ color:var(--lime); }
+  .packages-inner p{ color:var(--muted); font-size:15px; max-width:56ch; }
+  .packages-inner .btn{ margin-top:10px; }
 
   .contact{ border-bottom:none; }
   .contact-inner{ background:var(--bg-panel); border:1px solid var(--line); border-radius:14px; padding:60px; text-align:center; }
@@ -198,6 +222,12 @@
     .project-grid{ grid-template-columns:1fr; }
     .nav-links{ display:none; }
     .contact-inner{ padding:40px 24px; }
+    .packages-inner{ padding:34px 22px; }
+  }
+  @media (max-width: 480px){
+    .card-thumb{ height:190px; }
+    .card-body{ padding:20px 18px; }
+    .card-tab{ padding:10px 14px; }
   }
   @media (prefers-reduced-motion: reduce){
     .cursor, .eyebrow::before{ animation:none; }
@@ -271,14 +301,6 @@
           </p>
         </div>
 
-        <ul class="stack-list">
-          <li>HTML / CSS <span>frontend</span></li>
-          <li>JavaScript <span>frontend</span></li>
-          <li>Diseño UI <span>diseño</span></li>
-          <li>Netlify-Vercel <span>Alojamiento</span></li>
-          <li>Fotografía de negocio <span>servicio</span></li>
-          <li>Neubox<span>Dominios</span></li>
-        </ul>
       </div>
     </div>
   </section>
@@ -291,6 +313,19 @@
       </div>
 
       <div class="project-grid">
+
+         <div class="card">
+          <div class="card-tab"><span>Ichiban-Sushi</span><span class="status">● En linea</span></div>
+          <div class="card-thumb"><img src="Ichiban-Sushi.png" alt="Vista previa Ichiban-Sushi" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-title">Ichiban-Sushi<span class="ext">.05</span></div>
+            <p class="card-desc">Sitio web para un restaurante de sushi con menú digital, sistema de pedidos en línea y sección de promociones.</p>
+            <div class="card-tags">
+              <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span><span class="tag">Netlify</span>
+            </div>
+            <a href="https://ichiban-sushi.diacomputacion.com.mx/" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="Descargar aplicación Android">Ver sitio →</a>
+          </div>
+        </div>
 
         <div class="card">
           <div class="card-tab"><span>callicoffe.com.mx</span><span class="status">● en línea</span></div>
@@ -336,21 +371,24 @@
           <div class="card-thumb"><img src="School_Reminder.png" alt="Vista previa School Reminder" loading="lazy"></div>
           <div class="card-body">
             <div class="card-title">School Reminder<span class="ext">.04</span></div>
-            <p class="card-desc">School Reminder es una aplicacion de agenda escolar donde puedes tener toda tu estancia en la escuela mas controlada </p>
-  
+            <p class="card-desc">School Reminder es una aplicacion de agenda escolar donde puedes tener toda tu estancia en la escuela mas controlada.</p>
+            <div class="card-tags">
+              <span class="tag">Android</span><span class="tag">Agenda</span><span class="tag">App</span>
+            </div>
             <a href="https://school-reminder-official.netlify.app/" target="_blank" rel="noopener noreferrer" class="card-link" aria-label="Descargar aplicación Android">Ver sitio →</a>
           </div>
-          
         </div>
+
+       
+
         <div class="packages-inner">
-        <h2>Elige el <span>paquete</span> ideal para tu negocio</h2>
-        <p>Básico, Medio, Alto y Plus. Revisa qué incluye cada uno, paso a paso, con su descripción y ejemplos.</p>
-        <a href="paquetes.html" class="btn btn-primary">Ver paquetes →</a>
-      </div>
-    </div>
+          <h2>Elige el <span>paquete</span> ideal para tu negocio</h2>
+          <p>Básico, Medio, Alto y Plus. Revisa qué incluye cada uno, paso a paso, con su descripción y ejemplos.</p>
+          <a href="paquetes.html" class="btn btn-primary">Ver paquetes →</a>
+        </div>
 
       </div>
-    </div>s
+    </div>
   </section>
 
   <section id="contact" class="contact">
